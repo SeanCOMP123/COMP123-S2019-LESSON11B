@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -48,6 +49,26 @@ namespace COMP123_S2019_LESSON11B
         private void ExitToolStripButton_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // TODO: This line of code loads data into the 'testDataBaseDataSet.StudentTable' table. You can move, or remove it, as needed.
+            this.studentTableTableAdapter.Fill(this.testDataBaseDataSet.StudentTable);
+
+        }
+
+        private void ShowDataButton_Click(object sender, EventArgs e)
+        {
+            var studnetList =
+                from student in this.testDataBaseDataSet.StudentTable
+                select student;
+
+            foreach (var student in studnetList.ToList())
+            {
+                Debug.WriteLine("Student ID:"+ student.StudentID+
+                    "Last Name: " + student.LastName);
+            }
         }
     }
 }
