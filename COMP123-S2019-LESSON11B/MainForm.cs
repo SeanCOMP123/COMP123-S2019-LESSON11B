@@ -89,6 +89,7 @@ namespace COMP123_S2019_LESSON11B
             StudentSaveFileDialog.Filter = "Text Files (*.txt)|*.txt| All File (*.*)|(*.*";
 
             //open file dialog mod    var result = StudentSaveFileDialog.ShowDialog();
+            var result = StudentSaveFileDialog.ShowDialog();
             if (result != DialogResult.Cancel)
             {
                 using (StreamWriter outputString = new StreamWriter(File.Open(StudentSaveFileDialog.FileName, FileMode.Create)))
@@ -112,6 +113,108 @@ namespace COMP123_S2019_LESSON11B
         {
             Program.studentInfoForm.Show();
             this.Hide();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //configure the file dialog
+            StudentOpenFileDialog.FileName = "Student.txt";
+            StudentOpenFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+            StudentOpenFileDialog.Filter= "Text Files (*.txt)|*.txt| All File (*.*)|(*.*";
+            //opne the file dialog
+            var result = StudentOpenFileDialog.ShowDialog();
+            if (result!= DialogResult.Cancel)
+            {
+                try
+                {
+                    //open the file dialog
+                    using (StreamReader inputStream = new StreamReader(File.Open("Student.txt", FileMode.Open)))
+                    {
+                        //read stuff from the file into the student object
+                        Program.student.id = int.Parse(inputStream.ReadLine());
+                        Program.student.StudentID = inputStream.ReadLine();
+                        Program.student.FirstName = inputStream.ReadLine();
+                        Program.student.LastName = inputStream.ReadLine();
+
+                        //cleanup
+                        inputStream.Close();
+ 
+                        inputStream.Dispose();
+                        NextButton_Click(sender, e);
+                    }
+                }
+                catch (IOException exception)
+                {
+                    MessageBox.Show("Error:" + exception.Message, "File I/O error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            
+        }
+
+        private void saveBinaryFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // configure the file dialog
+            StudentSaveFileDialog.FileName = "Student.dat";
+            StudentSaveFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+            StudentSaveFileDialog.Filter = "Binary Files (*.dat)|*.dat| All File (*.*)|(*.*";
+
+            //open file dialog mod    var result = StudentSaveFileDialog.ShowDialog();
+            var result = StudentSaveFileDialog.ShowDialog();
+            if (result != DialogResult.Cancel)
+            {
+                using (BinaryWriter outputString = new BinaryWriter(File.Open(StudentSaveFileDialog.FileName, FileMode.Create)))
+                {
+
+                    //write stuff to the file
+                    outputString.Write(Program.student.id.ToString());
+                    outputString.Write(Program.student.StudentID);
+                    outputString.Write(Program.student.FirstName);
+                    outputString.Write(Program.student.LastName);
+                    //cleanup
+                    outputString.Flush();
+                    outputString.Close();
+                    outputString.Dispose();
+                }
+                MessageBox.Show("File Saved", "Saving....", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+        }
+
+        private void openBinaryFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //configure the file dialog
+            StudentOpenFileDialog.FileName = "Student.dat";
+            StudentOpenFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+            StudentOpenFileDialog.Filter = "Text Files (*.dat)|*.dat| All File (*.*)|(*.*";
+            //opne the file dialog
+            var result = StudentOpenFileDialog.ShowDialog();
+            if (result != DialogResult.Cancel)
+            {
+                try
+                {
+                    //open the file dialog
+                    using (BinaryReader inputStream = new BinaryReader(File.Open(StudentOpenFileDialog.FileName, FileMode.Open)))
+                    {
+                        //read stuff from the file into the student object
+                        Program.student.id = int.Parse(inputStream.ReadString());
+                        Program.student.StudentID = inputStream.ReadString();
+                        Program.student.FirstName = inputStream.ReadString();
+                        Program.student.LastName = inputStream.ReadString();
+
+                        //cleanup
+                        inputStream.Close();
+
+                        inputStream.Dispose();
+                        NextButton_Click(sender, e);
+                    }
+                }
+                catch (IOException exception)
+                {
+                    MessageBox.Show("Error:" + exception.Message, "File I/O error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }
