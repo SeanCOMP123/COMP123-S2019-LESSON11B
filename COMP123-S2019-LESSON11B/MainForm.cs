@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.IO;
 namespace COMP123_S2019_LESSON11B
 {
     public partial class MainForm : Form
@@ -58,17 +58,60 @@ namespace COMP123_S2019_LESSON11B
 
         }
 
-        private void ShowDataButton_Click(object sender, EventArgs e)
+        private void StudnetTableDataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            var studnetList =
-                from student in this.testDataBaseDataSet.StudentTable
-                select student;
+            // local scope aliases
+            var rowIndex = StudnetTableDataGridView.CurrentCell.RowIndex;
+            var rows = StudnetTableDataGridView.Rows;
+            var columnCount = StudnetTableDataGridView.ColumnCount;
+            var cells = rows[rowIndex].Cells;
+            rows[rowIndex].Selected = true;
 
-            foreach (var student in studnetList.ToList())
+            string outputString = string.Empty;
+            for (int index = 0; index < columnCount; index++)
             {
-                Debug.WriteLine("Student ID:"+ student.StudentID+
-                    "Last Name: " + student.LastName);
+                outputString += cells[index].Value.ToString() + " ";
             }
+            SelectionLabel.Text = outputString;
+
+            Program.student.id = int.Parse(cells[(int)StudentField.ID].Value.ToString());
+            Program.student.StudentID = cells[(int)StudentField.STUDENT_ID].Value.ToString();
+            Program.student.FirstName = cells[(int)StudentField.FIRST_NAME].Value.ToString();
+            Program.student.LastName = cells[(int)StudentField.LAST_NAME].Value.ToString();
+    
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // configure the file dialog
+            StudentSaveFileDialog.FileName = "Student.txt";
+            StudentSaveFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+            StudentSaveFileDialog.Filter = "Text Files (*.txt)|*.txt| All File (*.*)|(*.*";
+
+            //open file dialog mod    var result = StudentSaveFileDialog.ShowDialog();
+            if (result != DialogResult.Cancel)
+            {
+                using (StreamWriter outputString = new StreamWriter(File.Open(StudentSaveFileDialog.FileName, FileMode.Create)))
+                {
+
+                    //write stuff to the file
+                    outputString.WriteLine(Program.student.id);
+                    outputString.WriteLine(Program.student.StudentID);
+                    outputString.WriteLine(Program.student.FirstName);
+                    outputString.WriteLine(Program.student.LastName);
+                    //cleanup
+                    outputString.Close();
+                    outputString.Dispose();
+                }
+                MessageBox.Show("File Saved", "Saving....");
+            }
+        }
+    
+
+        private void NextButton_Click(object sender, EventArgs e)
+        {
+            Program.studentInfoForm.Show();
+            this.Hide();
         }
     }
 }

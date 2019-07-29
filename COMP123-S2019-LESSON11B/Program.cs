@@ -11,6 +11,8 @@ namespace COMP123_S2019_LESSON11B
         public static MainForm mainForm;
         public static StartForm startForm;
         public static AboutBox aboutBox;
+        public static Student student;
+        public static StudentInfoForm studentInfoForm;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -23,7 +25,9 @@ namespace COMP123_S2019_LESSON11B
             startForm = new StartForm();
             mainForm = new MainForm();
             aboutBox = new AboutBox();
-            Application.Run(new StartForm());
+            student = new Student();
+            studentInfoForm = new StudentInfoForm();
+            Application.Run(startForm);
         }
     }
 }
